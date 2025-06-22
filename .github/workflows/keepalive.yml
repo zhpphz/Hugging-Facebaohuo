@@ -1,22 +1,19 @@
 name: Keepalive All Hugging Face Spaces
+
+# ✅ 正确写法：`on` 下用缩进定义事件
 on:
-  workflow_dispatch: true   
-  schedule:
-    - cron: "0 */2 * * *"   
+  workflow_dispatch:  # 允许手动触发
+  schedule:           # 定时触发
+    - cron: "0 */2 * * *"  
+
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
-      - name: Checkout repository
-        uses: actions/checkout@v4
-        
-      - name: Ping all Spaces
+      - uses: actions/checkout@v4
+      - name: Ping Spaces
         run: |
           while IFS= read -r url; do
-            if [ -n "$url" ]; then
-              echo "▶ Pinging: $url"
-              status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
-              echo "   Status: $status_code"
-              sleep $((RANDOM % 30 + 10))
-            fi
+            curl -s "$url" > /dev/null
+            sleep 10
           done < urls.txt
