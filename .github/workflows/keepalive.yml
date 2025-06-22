@@ -1,11 +1,8 @@
 name: Keepalive All Hugging Face Spaces
-
-# ✅ 正确写法：`on` 下用缩进定义事件
 on:
-  workflow_dispatch:  # 允许手动触发
-  schedule:           # 定时触发
-    - cron: "25 1,5,11,15 * * *"
-
+  schedule:
+    - cron: "35 1,5,11,15 * * *"  # 北京时间 9:05, 13:05, 19:05, 23:05
+  workflow_dispatch:
 jobs:
   ping:
     runs-on: ubuntu-latest
@@ -15,6 +12,6 @@ jobs:
         run: |
           while IFS= read -r url; do
             status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
-            echo "URL: $url | 状态码: $status_code"  # 输出到GitHub Actions日志
+            echo "URL: $url | 状态码: $status_code"
             sleep 1
           done < urls.txt
