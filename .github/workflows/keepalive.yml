@@ -1,13 +1,14 @@
 name: Keepalive All Hugging Face Spaces
 on:
+  workflow_dispatch: true   # 👈 新增这一行！
   schedule:
-    - cron: "0 */2 * * *"  # 每6小时运行一次（UTC时间）
+    - cron: "0 */2 * * *"   # 每2小时运行一次（UTC时间）
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository
-        uses: actions/checkout@v4  # 拉取仓库内容（获取urls.txt）
+        uses: actions/checkout@v4
         
       - name: Ping all Spaces
         run: |
@@ -16,6 +17,6 @@ jobs:
               echo "▶ Pinging: $url"
               status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
               echo "   Status: $status_code"
-              sleep $((RANDOM % 30 + 10))  # 随机延迟10~40秒
+              sleep $((RANDOM % 30 + 10))
             fi
           done < urls.txt
