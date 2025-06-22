@@ -15,5 +15,5 @@ jobs:
         run: |
           while IFS= read -r url; do
             curl -s "$url" > /dev/null
-            sleep 10
+            sleep 1
           done < urls.txt
