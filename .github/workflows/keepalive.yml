@@ -9,9 +9,58 @@ jobs:
     steps:
       - uses: actions/checkout@v4
       - name: Ping Spaces
+        id: ping
         run: |
+          error_urls=""
+          success_count=0
+          total_count=0
+          
           while IFS= read -r url; do
+            ((total_count++))
             status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
             echo "URL: $url | 状态码: $status_code"
+            
+            if [ "$status_code" -ne 200 ]; then
+              error_urls="$error_urls\n$url (状态码: $status_code)"
+            else
+              ((success_count++))
+            fi
+            
             sleep 1
           done < urls.txt
+          
+          # 设置输出变量
+          if [ -n "$error_urls" ]; then
+            echo "error_urls=${error_urls}" >> $GITHUB_OUTPUT
+            echo "has_errors=true" >> $GITHUB_OUTPUT
+          else
+            echo "has_errors=false" >> $GITHUB_OUTPUT
+          fi
+          echo "success_count=${success_count}" >> $GITHUB_OUTPUT
+          echo "total_count=${total_count}" >> $GITHUB_OUTPUT
+      
+      - name: Send WxPusher Notification
+        if: always()
+        run: |
+          # 替换为你的WxPusher API Token和UID
+          WXPUSHER_TOKEN="AT_8W0HaJDqsTjYPxgsyCdg5xxGU58e7a9q"
+          UIDS="UID_pT7ifPmHs5ewHZcNXE9saeXCCopf"
+          
+          if ${{ steps.ping.outputs.has_errors == 'true' }}; then
+            message="⚠️ Hugging Face Spaces检测异常\n\n"
+            message+="异常链接:\n${{ steps.ping.outputs.error_urls }}\n\n"
+            message+="成功: ${{ steps.ping.outputs.success_count }}/${{ steps.ping.outputs.total_count }}"
+          else
+            message="✅ 所有Hugging Face Spaces链接正常\n\n"
+            message+="检测链接总数: ${{ steps.ping.outputs.total_count }}"
+          fi
+          
+          # 发送通知
+          curl -X POST \
+            https://wxpusher.zjiecode.com/api/send/message \
+            -H "Content-Type: application/json" \
+            -d '{
+              "appToken": "'"$WXPUSHER_TOKEN"'",
+              "content": "'"$message"'",
+              "uids": ["'"$UIDS"'"]
+            }'
