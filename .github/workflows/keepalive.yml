@@ -11,8 +11,8 @@ jobs:
       - name: Ping Spaces 和 notify via WxPusher
         run: |
           # 🔴🔴🔴 高危！以下Token和UID会公开暴露！🔴🔴🔴
-          WXP_TOKEN="AT_你的Token"  # 替换为你的Token
-          WXP_UID="UID_你的UID"    # 替换为你的UID
+          WXP_TOKEN="AT_8W0HaJDqsTjYPxgsyCdg5xxGU58e7a9q"  # 替换为你的Token
+          WXP_UID="UID_pT7ifPmHs5ewHZcNXE9saeXCCopf"    # 替换为你的UID
 
           failed_urls=""
           all_success=true  # 默认假设全部成功
