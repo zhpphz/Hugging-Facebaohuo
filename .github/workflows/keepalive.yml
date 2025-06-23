@@ -1,13 +1,15 @@
 name: Keepalive All Hugging Face Spaces
 on:
   schedule:
-    - cron: "15 1,5,15 * * *"  # 北京时间 9:20, 13:20, 23:20
+    - cron: "15 1,5,15 * * *"
   workflow_dispatch:
+
 jobs:
   ping:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
+
       - name: Ping Spaces
         id: ping
         run: |
@@ -21,46 +23,40 @@ jobs:
             echo "URL: $url | 状态码: $status_code"
             
             if [ "$status_code" -ne 200 ]; then
-              error_urls="$error_urls\n$url (状态码: $status_code)"
+              error_urls="${error_urls}${url} (状态码: ${status_code})\n"
             else
               ((success_count++))
             fi
-            
             sleep 1
           done < urls.txt
           
-          # 设置输出变量
-          if [ -n "$error_urls" ]; then
-            echo "error_urls=${error_urls}" >> $GITHUB_OUTPUT
-            echo "has_errors=true" >> $GITHUB_OUTPUT
-          else
-            echo "has_errors=false" >> $GITHUB_OUTPUT
-          fi
-          echo "success_count=${success_count}" >> $GITHUB_OUTPUT
-          echo "total_count=${total_count}" >> $GITHUB_OUTPUT
-      
+          # 使用旧版 set-output 语法
+          echo "::set-output name=error_urls::${error_urls}"
+          echo "::set-output name=has_errors::$( [ -n "$error_urls" ] && echo true || echo false )"
+          echo "::set-output name=success_count::${success_count}"
+          echo "::set-output name=total_count::${total_count}"
+
       - name: Send WxPusher Notification
         if: always()
         run: |
-          # 替换为你的WxPusher API Token和UID
           WXPUSHER_TOKEN="AT_8W0HaJDqsTjYPxgsyCdg5xxGU58e7a9q"
           UIDS="UID_pT7ifPmHs5ewHZcNXE9saeXCCopf"
           
+          # 处理换行符（确保 JSON 格式正确）
+          ERROR_URLS="${{ steps.ping.outputs.error_urls }}"
+          ERROR_URLS_ESCAPED=$(echo "${ERROR_URLS}" | sed 's/\\n/%0A/g')  # 替换 \n 为 URL 编码的换行符
+          
           if ${{ steps.ping.outputs.has_errors == 'true' }}; then
-            message="⚠️ Hugging Face Spaces检测异常\n\n"
-            message+="异常链接:\n${{ steps.ping.outputs.error_urls }}\n\n"
-            message+="成功: ${{ steps.ping.outputs.success_count }}/${{ steps.ping.outputs.total_count }}"
+            message="⚠️ Hugging Face Spaces检测异常%0A%0A异常链接:%0A${ERROR_URLS_ESCAPED}%0A%0A成功: ${{ steps.ping.outputs.success_count }}/${{ steps.ping.outputs.total_count }}"
           else
-            message="✅ 所有Hugging Face Spaces链接正常\n\n"
-            message+="检测链接总数: ${{ steps.ping.outputs.total_count }}"
+            message="✅ 所有链接正常%0A检测总数: ${{ steps.ping.outputs.total_count }}"
           fi
           
-          # 发送通知
           curl -X POST \
-            https://wxpusher.zjiecode.com/api/send/message \
+            "https://wxpusher.zjiecode.com/api/send/message" \
             -H "Content-Type: application/json" \
             -d '{
-              "appToken": "'"$WXPUSHER_TOKEN"'",
-              "content": "'"$message"'",
-              "uids": ["'"$UIDS"'"]
+              "appToken": "'"${WXPUSHER_TOKEN}"'",
+              "content": "'"${message}"'",
+              "uids": ["'"${UIDS}"'"]
             }'
