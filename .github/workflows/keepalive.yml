@@ -27,7 +27,7 @@ jobs:
             else
               echo "URL: $url | 状态码: $status_code"
             fi
-            sleep 1
+            sleep 0.3
           done < urls.txt
 
           # 根据情况发送不同通知
