@@ -8,18 +8,21 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Ping Spaces and notify via WxPusher
+      - name: Ping Spaces 和 notify via WxPusher
         run: |
           # 🔴🔴🔴 高危！以下Token和UID会公开暴露！🔴🔴🔴
-          WXP_TOKEN="AT_8W0HaJDqsTjYPxgsyCdg5xxGU58e7a9q"  # 请替换为你的Token
-          WXP_UID="UID_pT7ifPmHs5ewHZcNXE9saeXCCopf"       # 请替换为你的UID
+          WXP_TOKEN="AT_你的Token"  # 替换为你的Token
+          WXP_UID="UID_你的UID"    # 替换为你的UID
 
           failed_urls=""
+          all_success=true  # 默认假设全部成功
+
           while IFS= read -r url; do
             status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
             
             if [ "$status_code" -ne 200 ]; then
               failed_urls+="❌ $url (状态码: $status_code)\n"
+              all_success=false  # 标记存在失败
               echo "::warning::URL 访问失败: $url | 状态码: $status_code"
             else
               echo "URL: $url | 状态码: $status_code"
@@ -27,14 +30,27 @@ jobs:
             sleep 1
           done < urls.txt
 
-          if [ -n "$failed_urls" ]; then
+          # 根据情况发送不同通知
+          if [ "$all_success" = true ]; then
+            # 全部200时发送成功通知
             curl -s -X POST "https://wxpusher.zjiecode.com/api/send/message" \
               -H "Content-Type: application/json" \
               -d '{
                 "appToken": "'"$WXP_TOKEN"'",
-                "content": "⚠️ Spaces 异常告警\n\n'"$failed_urls"'",
+                "content": "✅ Hugging-Face 所有链接正常",
                 "contentType": 1,
                 "uids": ["'"$WXP_UID"'"]
               }'
-            echo "已推送微信告警"
+            echo "已推送成功通知"
+          elif [ -n "$failed_urls" ]; then
+            # 存在失败时发送异常通知
+            curl -s -X POST "https://wxpusher.zjiecode.com/api/send/message" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "appToken": "'"$WXP_TOKEN"'",
+                "content": "⚠️ Hugging-Face 异常告警\n\n'"$failed_urls"'",
+                "contentType": 1,
+                "uids": ["'"$WXP_UID"'"]
+              }'
+            echo "已推送异常告警"
           fi
