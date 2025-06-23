@@ -8,10 +8,33 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - name: Ping Spaces
+      - name: Ping Spaces and notify via WxPusher
         run: |
+          # 🔴🔴🔴 高危！以下Token和UID会公开暴露！🔴🔴🔴
+          WXP_TOKEN="AT_8W0HaJDqsTjYPxgsyCdg5xxGU58e7a9q"  # 请替换为你的Token
+          WXP_UID="UID_pT7ifPmHs5ewHZcNXE9saeXCCopf"       # 请替换为你的UID
+
+          failed_urls=""
           while IFS= read -r url; do
             status_code=$(curl -s -o /dev/null -w "%{http_code}" "$url")
-            echo "URL: $url | 状态码: $status_code"
+            
+            if [ "$status_code" -ne 200 ]; then
+              failed_urls+="❌ $url (状态码: $status_code)\n"
+              echo "::warning::URL 访问失败: $url | 状态码: $status_code"
+            else
+              echo "URL: $url | 状态码: $status_code"
+            fi
             sleep 1
           done < urls.txt
+
+          if [ -n "$failed_urls" ]; then
+            curl -s -X POST "https://wxpusher.zjiecode.com/api/send/message" \
+              -H "Content-Type: application/json" \
+              -d '{
+                "appToken": "'"$WXP_TOKEN"'",
+                "content": "⚠️ Spaces 异常告警\n\n'"$failed_urls"'",
+                "contentType": 1,
+                "uids": ["'"$WXP_UID"'"]
+              }'
+            echo "已推送微信告警"
+          fi
