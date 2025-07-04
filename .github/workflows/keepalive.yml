@@ -1,7 +1,7 @@
 name: Keepalive All Hugging Face Spaces
 on:
   schedule:
-    - cron: "15 8,5,15 * * *"  # 北京时间 9:20, 13:20, 23:20
+    - cron: "15 1,5,15 * * *"  # 北京时间 9:20, 13:20, 23:20
   workflow_dispatch:
 jobs:
   ping:
