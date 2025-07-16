@@ -55,11 +55,11 @@ https://quanbu1-quanbu2.hf.space/crontab
 https://quanbu1-quanbu3.hf.space/crontab
 https://quanbu1-quanbu4.hf.space/crontab
 https://quanbu1-quanbu5.hf.space/crontab
-https://quanbu6-10-quanbu6.hf.space/crontab
-https://quanbu6-10-quanbu7.hf.space/crontab
-https://quanbu6-10-quanbu8.hf.space/crontab
-https://quanbu6-10-quanbu9.hf.space/crontab
-https://quanbu6-10-quanbu10.hf.space/crontab
+https://quanbu6-10-1-quanbu6.hf.space/crontab
+https://quanbu6-10-1-quanbu7.hf.space/crontab
+https://quanbu6-10-1-quanbu8.hf.space/crontab
+https://quanbu6-10-1-quanbu9.hf.space/crontab
+https://quanbu6-10-1-quanbu10.hf.space/crontab
 https://quanbu11-15-quanbu11.hf.space/crontab
 https://quanbu11-15-quanbu12.hf.space/crontab
 https://quanbu11-15-quanbu13.hf.space/crontab
