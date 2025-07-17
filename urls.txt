@@ -112,9 +112,9 @@ https://qiangshi01-qiangshi4.hf.space/crontab
 https://qiangshi01-qiangshi5.hf.space/crontab
 https://qiangshi6-1-qiangshi6.hf.space/crontab
 https://qiangshi7-1-qiangshi7.hf.space/crontab
-https://qiangshi8-1-qiangshi8.hf.space/crontab
+https://qiangshi8-1-qiangshi8-1.hf.space/crontab
 https://qiangshi9-1-qiangshi9.hf.space/crontab
-https://qiangshi02-qiangshi10.hf.space/crontab
+https://qiangshi10-1-qiangshi10.hf.space/crontab
 https://qiangshi03-qiangshi11.hf.space/crontab
 https://qiangshi03-qiangshi12.hf.space/crontab
 https://qiangshi03-qiangshi13.hf.space/crontab
