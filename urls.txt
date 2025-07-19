@@ -1,4 +1,4 @@
-https://moontv-moontv.hf.space/
+https://moontv-moontv.hf.space
 https://tv-box-tvbox.hf.space
 https://diyige-diyige.hf.space/crontab
 https://huafeiliu-hf26.hf.space/crontab
@@ -27,7 +27,7 @@ https://hh0706-liantong8.hf.space/crontab
 https://hh0706-liantong9.hf.space/crontab
 https://hh0706-liantong10.hf.space/crontab
 https://huafeiyi-hf1.hf.space/crontab
-https://huafeiyi-hf2.hf.space/crontab
+https://hf2-1-hf2.hf.space/crontab
 https://huafeiyi-hf3.hf.space/crontab
 https://hf4-hf4.hf.space/crontab
 https://huafeiyi-hf5.hf.space/crontab
